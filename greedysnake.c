@@ -65,7 +65,7 @@ void init_termios()
 {
     struct termios t;
     tcgetattr(STDIN_FILENO, &t);
-    t.c_lflag &= ~(unsigned long)(ICANON | ECHO);
+    t.c_lflag &= ~(tcflag_t)(ICANON | ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &t);
 }
 
@@ -90,6 +90,8 @@ void snake_move(int key, int (*snake_list)[2], int snake_length)
     case 'd':
         snake_list[0][0]++;
         break;
+    default:
+        break;;
     }
 }
 
@@ -140,7 +142,7 @@ void *move_event_callback(void *arg)
     return NULL;
 }
 
-void body_lengthing(int (*snake_list)[2], int *snake_length, int rand_x, int rand_y)
+void body_lengthing(int (*snake_list)[2], int *snake_length)
 {
 
     if (snake_list[(*snake_length) - 1][0] - snake_list[(*snake_length) - 2][0] == 0)
@@ -178,7 +180,7 @@ int main()
     int length = 6;
     int last_key = 'w';
 
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
     int rand_x = rand() % STAGE_WIDTH;
     int rand_y = rand() % STAGE_HEIGHT;
 
@@ -199,7 +201,7 @@ int main()
             {
                 rand_x = rand() % STAGE_WIDTH;
                 rand_y = rand() % STAGE_HEIGHT;
-                body_lengthing(snake, &length, rand_x, rand_y);
+                body_lengthing(snake, &length);
             }
             render(snake, length, rand_x, rand_y);
         }
